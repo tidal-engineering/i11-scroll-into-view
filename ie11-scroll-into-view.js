@@ -13,89 +13,86 @@
     }
 }(this, function ($) {
     'use strict';
-    function detectIE11 () {
+    function detectIE11() {
         return window.navigator.userAgent.indexOf('Trident/') > 0;
     }
 
-    // Disable no-inner-declations check; we really, really don't want
-    // to run any of the code unless it's IE 11.
-    /* eslint-disable no-inner-declarations */
-
     // Return early if this isn't IE 11
-    if (detectIE11()) {
-        // hasScroller - snippet from StackOverflow:
-        // http://stackoverflow.com/a/34700876
-        var hasScroller = (function () {
-            var getComputedStyle = document.body && document.body.currentStyle ? function (elem) {
-                return elem.currentStyle;
-            } : function (elem) {
-                return document.defaultView.getComputedStyle(elem, null);
-            };
 
-            function getActualCss (elem, style) {
-                return getComputedStyle(elem)[style];
-            }
+    if (!detectIE11()) return;
 
-            function autoOrScroll (text) {
-                return text === 'scroll' || text === 'auto';
-            }
-
-            function isXScrollable (elem) {
-                return elem.offsetWidth < elem.scrollWidth &&
-                    autoOrScroll(getActualCss(elem, 'overflow-x'));
-            }
-
-            function isYScrollable (elem) {
-                return elem.offsetHeight < elem.scrollHeight &&
-                    autoOrScroll(getActualCss(elem, 'overflow-y'));
-            }
-
-            return function (elem) {
-                return isYScrollable(elem) || isXScrollable(elem);
-            };
-        })();
-
-        // One of the element's parents is hopefully a scroller
-        function recursiveFindClosestScroller (el) {
-            if (hasScroller(el)) {
-                return el;
-            }
-
-            if (el.parentNode === null) {
-                return null;
-            }
-
-            return recursiveFindClosestScroller(el.parentNode);
-        }
-
-        function ieScrollIntoView (el) {
-            var scrollContainer = recursiveFindClosestScroller(el)
-                , $scrollContainer
-                , $el
-                , gridMainScrollTop
-                , elOffsetTop
-                , gridMainTop
-                ;
-            if (scrollContainer === null) {
-                // We couldn't find a scroll container, so let's fall
-                // back to using scrollIntoView for now (and hope for the best)
-                el.scrollIntoView();
-            } else {
-                $scrollContainer = $(scrollContainer);
-                $el = $(el);
-                gridMainScrollTop = $scrollContainer.scrollTop();
-                elOffsetTop = $el.offset().top;
-                gridMainTop = $scrollContainer.offset().top;
-
-                $scrollContainer.scrollTop(
-                    gridMainScrollTop + elOffsetTop - gridMainTop
-                );
-            }
-        }
-
-        HTMLElement.prototype.scrollIntoView = function () {
-            ieScrollIntoView(this);
+    // hasScroller - snippet from StackOverflow:
+    // http://stackoverflow.com/a/34700876
+    var hasScroller = (function () {
+        var getComputedStyle = document.body && document.body.currentStyle ? function (elem) {
+            return elem.currentStyle;
+        } : function (elem) {
+            return document.defaultView.getComputedStyle(elem, null);
         };
+
+        function getActualCss(elem, style) {
+            return getComputedStyle(elem)[style];
+        }
+
+        function autoOrScroll(text) {
+            return text === 'scroll' || text === 'auto';
+        }
+
+        function isXScrollable(elem) {
+            return elem.offsetWidth < elem.scrollWidth &&
+                autoOrScroll(getActualCss(elem, 'overflow-x'));
+        }
+
+        function isYScrollable(elem) {
+            return elem.offsetHeight < elem.scrollHeight &&
+                autoOrScroll(getActualCss(elem, 'overflow-y'));
+        }
+
+        return function (elem) {
+            return isYScrollable(elem) || isXScrollable(elem);
+        };
+    })();
+
+    // One of the element's parents is hopefully a scroller
+    function recursiveFindClosestScroller(el) {
+        if (hasScroller(el)) {
+            return el;
+        }
+
+        if (el.parentNode === null) {
+            return null;
+        }
+
+        return recursiveFindClosestScroller(el.parentNode);
     }
+
+    function ieScrollIntoView(el) {
+        var scrollContainer = recursiveFindClosestScroller(el)
+            , $scrollContainer
+            , $el
+            , gridMainScrollTop
+            , elOffsetTop
+            , gridMainTop
+            ;
+        if (scrollContainer === null) {
+            // We couldn't find a scroll container.
+            // This is probably because no scrolling is needed, so do nothing.
+        } else {
+            $scrollContainer  = $(scrollContainer);
+            $el               = $(el);
+            gridMainScrollTop = $scrollContainer.scrollTop();
+            elOffsetTop       = $el.offset().top;
+            gridMainTop       = $scrollContainer.offset().top;
+
+            $scrollContainer.scrollTop(
+                gridMainScrollTop + elOffsetTop - gridMainTop
+            );
+        }
+    }
+
+    HTMLElement.prototype.scrollIntoView = function () {
+        ieScrollIntoView(this);
+    };
+
     return {};
 }));

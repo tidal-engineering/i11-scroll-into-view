@@ -109,6 +109,20 @@
 </div>
 </div>
 </div>
+<div class="sections">
+  <div class="section">
+    <div class="overflow-scroll">
+      <ol>
+        <li id="first-baz">Baz</li>
+        <li id="last-baz">Baz</li>
+      </ol>
+    </div>
+    <div class="buttons">
+      <button data-section="baz" data-to="first">Scroll to top</button>
+      <button data-section="baz" data-to="last">Scroll to bottom</button>
+    </div>
+  </div>
+</div>
 <script>
     function getWrapperScrollLeft() {
         return document.getElementById('horizontal-scroller').scrollLeft;
@@ -120,13 +134,18 @@
 
             var to = button.getAttribute('data-to') + '-' + button.getAttribute('data-section');
             console.log('Jump to', to);
+            var timeout=setTimeout(function(){
+                document.getElementById('message').innerHTML =
+                    '<p class="message-error">Test failed: scrollIntoView has taken more than 2 seconds.</p>';
+            },2000);
             document.getElementById(to).scrollIntoView();
+            clearTimeout(timeout);
 
             var scrollLeftAfter = getWrapperScrollLeft();
 
             if (scrollLeftBefore === scrollLeftAfter) {
                 document.getElementById('message').innerHTML =
-                        '<p class="message-ok">Test passed: Behavior of scrollIntoView was like expected.</p>';
+                        '<p class="message-ok">Test passed: Behavior of scrollIntoView was as expected.</p>';
             } else {
                 document.getElementById('message').innerHTML =
                         '<p class="message-error">Test failed: the browser scrolled horizontally.</p>';
