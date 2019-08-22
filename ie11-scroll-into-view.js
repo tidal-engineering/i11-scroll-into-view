@@ -1,15 +1,15 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['jquery'], factory);
+        define(factory);
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
         // like Node.
-        module.exports = factory(require('jquery'));
+        module.exports = factory();
     } else {
         // Browser globals (root is window)
-        root.ie11ScrollIntoView = factory(root.jQuery);
+        root.ie11ScrollIntoView = factory();
     }
 }(this, function ($) {
     'use strict';
@@ -66,27 +66,17 @@
         return recursiveFindClosestScroller(el.parentNode);
     }
 
+    function offsetTop(el) {
+      return el.getBoundingClientRect().top + document.body.scrollTop;
+    }
+
     function ieScrollIntoView(el) {
-        var scrollContainer = recursiveFindClosestScroller(el)
-            , $scrollContainer
-            , $el
-            , gridMainScrollTop
-            , elOffsetTop
-            , gridMainTop
-            ;
+        var scrollContainer = recursiveFindClosestScroller(el);
         if (scrollContainer === null) {
             // We couldn't find a scroll container.
             // This is probably because no scrolling is needed, so do nothing.
         } else {
-            $scrollContainer  = $(scrollContainer);
-            $el               = $(el);
-            gridMainScrollTop = $scrollContainer.scrollTop();
-            elOffsetTop       = $el.offset().top;
-            gridMainTop       = $scrollContainer.offset().top;
-
-            $scrollContainer.scrollTop(
-                gridMainScrollTop + elOffsetTop - gridMainTop
-            );
+            scrollContainer.scrollTop = scrollContainer.scrollTop + offsetTop(el) - offsetTop(scrollContainer);
         }
     }
 
