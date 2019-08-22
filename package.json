@@ -1,6 +1,6 @@
 {
   "name": "ie11-scroll-into-view",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Polyfill/fix for scrollIntoView in IE 11",
   "main": "ie11-scroll-into-view.js",
   "scripts": {
