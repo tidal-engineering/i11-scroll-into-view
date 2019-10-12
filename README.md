@@ -19,10 +19,6 @@ Selenium's in-built handling of moveToElement is to use scrollIntoView().
 What can be done instead, is to polyfill/fix the scrollIntoView() function itself, so that Selenium
 can use it.
 
-## jQuery dependency
-
-You'll need jQuery in the project to use this polyfill. (It could probably be rewritten slightly to not use jQuery, if somebody looks into it. PRs accepted.)
-
 ## Usage:
 
 #### 1) Install it
@@ -35,7 +31,6 @@ npm install ie11-scroll-into-view --save
 
 #### 2) Import it
 ```html
-<script src="jquery.js"></script>
 <script src="ie11-scroll-into-view.js"></script>
 ```
 
