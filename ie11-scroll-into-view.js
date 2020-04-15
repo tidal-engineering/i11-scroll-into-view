@@ -70,6 +70,10 @@
       return el.getBoundingClientRect().top + document.body.scrollTop;
     }
 
+    function offsetLeft(el) {
+        return el.getBoundingClientRect().left + document.body.scrollLeft;
+    }
+
     function ieScrollIntoView(el) {
         var scrollContainer = recursiveFindClosestScroller(el);
         if (scrollContainer === null) {
@@ -77,6 +81,7 @@
             // This is probably because no scrolling is needed, so do nothing.
         } else {
             scrollContainer.scrollTop = scrollContainer.scrollTop + offsetTop(el) - offsetTop(scrollContainer);
+            scrollContainer.scrollLeft = scrollContainer.scrollLeft + offsetLeft(el) - offsetLeft(scrollContainer);
         }
     }
 
